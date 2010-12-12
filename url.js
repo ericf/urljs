@@ -1,29 +1,32 @@
 /**
  * URL.js
+ * 
+ * Copyright 2010 Eric Ferraiuolo
  */
 
 var URL = function () {
 	
 	var u = this;
 	
-	if (u && u.hasOwnProperty && (u instanceof URL)) {
-		u._init.apply(u, arguments);
-	} else {
-		u = URL.apply(u, arguments);
+	if ( ! (u && u.hasOwnProperty && (u instanceof URL))) {
+		u = new URL();
 	}
 	
-	return u;
+	return u._init.apply(u, arguments);
 };
 
 (function(){
 	
-	var HTTP_PROTOCOL	= 'http:',
-		HTTPS_PROTOCOL	= 'https:',
+	var ABSOLUTE		= 'absolute',
+		RELATIVE		= 'schemeRelative',
+		
+		HTTP			= 'http',
+		HTTPS			= 'https',
+		COLON			= ':',
 		SLASH_SLASH		= '//',
 		WWW				= 'www',
 		AT				= '@',
 		DOT				= '.',
-		COLON			= ':',
 		SLASH			= '/',
 		QUESTION		= '?',
 		EQUALS			= '=',
@@ -31,10 +34,16 @@ var URL = function () {
 		HASH			= '#',
 		EMPTY_STRING	= '',
 		
+		URL_TYPE_REGEX		= /^(?:(https?:\/\/|\/\/)|(\/|\?|#)|[^;:@=\.\s])/i,
+		URL_ABSOLUTE_REGEX	= /^(?:(https?)?:?\/\/)?(?:([^:@\s]+:?[^:@\s]+?)@)?((?:[^;:@=\/\?\.\s]+\.)+[A-Za-z0-9\-]{2,})(?::(\d+))?(?=\/|\?|#|$)([^\?#]+)?(?:\?([^#]+))?(?:#(.+))?/i,
+		URL_RELATIVE_REGEX	= /^([^\?#]+)?(?:\?([^#]+))?(?:#(.+))?/i,
+		
+		STRING			= 'string',
 		TRIM_REGEX		= /^\s+|\s+$/g,
-		URL_REGEX		= /^(?:(https?:)\/\/)?(?:([^:@\s]+:?[^:@\s]+?)@)?((?:[^;:@=\/\?\.\s]+\.)+[A-Za-z0-9\-]{2,})(?::(\d+))?(?=\/|\?|#|$)([^\?#]+)?(?:\?([^#]+))?(?:#(.+))?/i,
 		
 		trim, isString;
+	
+	// *** Utilities *** //
 	
 	trim = String.prototype.trim ? function (s) {
 		return ( s && s.trim ? s.trim() : s );
@@ -45,8 +54,35 @@ var URL = function () {
 	};
 	
 	isString = function (o) {
-		return typeof o === 'string';
+		return typeof o === STRING;
 	};
+	
+	// *** Static *** //
+	
+	function parseQuery (queryString) {
+		
+		if ( ! isString(queryString)) { return; }
+		
+		queryString = trim(queryString);
+		
+		var query		= [],
+			queryParts	= queryString.split(AMP),
+			queryPart, i, len;
+		
+		for (i = 0, len = queryParts.length; i < len; i++) {
+			if (queryParts[i]) {
+				queryPart = queryParts[i].split(EQUALS);
+				query.push(queryPart[1] ? queryPart : [queryPart[0]]);
+			}
+		}
+		
+		return query;
+	}
+	
+	URL.ABSOLUTE	= ABSOLUTE;
+	URL.RELATIVE	= RELATIVE;
+	
+	URL.parseQuery		= parseQuery;
 	
 	// *** Prototype *** //
 	
@@ -56,42 +92,57 @@ var URL = function () {
 		
 		_init : function (url) {
 			
-			var urlParts = URL.parse(url);
+			url = trim(url);
 			
-			if ( ! urlParts) { return; }
+			this._isValid = isString(url) && url.length > 0 && this._parse(url);
 			
-			this._absolute	= true;
-			this._protocol	= urlParts[1] ? urlParts[1].toLowerCase() : HTTP_PROTOCOL;
-			this._userInfo	= urlParts[2];
-			this._host		= urlParts[3].toLowerCase();
-			this._port		= urlParts[4] ? parseInt(urlParts[4], 10) : undefined;
-			this._path		= urlParts[5] || SLASH;
-			this._query		= URL.parseQuery(urlParts[6]);
-			this._fragment	= urlParts[7];
+			return this;
 		},
 		
 		// *** Object Methods *** //
 		
 		toString : function () {
 			
-			if ( ! this._absolute) { return EMPTY_STRING; }
+			if ( ! this._isValid) { return EMPTY_STRING; }
 			
-			return [
+			var s = [];
 			
-				this._protocol + SLASH_SLASH,
-				this.authority(),
+			if (this._type === ABSOLUTE) {
+				s.push(
+					this._scheme ? (this._scheme + COLON + SLASH_SLASH) : SLASH_SLASH,
+					this.authority()
+				);
+			}
+			
+			s.push(
 				this._path,
-				this.query(),
+				this._query ? (QUESTION + this.query()) : EMPTY_STRING,
 				this._fragment ? (HASH + this._fragment) : EMPTY_STRING
+			);
 			
-			].join(EMPTY_STRING);
+			return s.join(EMPTY_STRING);
 		},
 		
 		// *** Accessor Methods *** //
 		
-		protocol : function () {
+		isAbsolute : function () {
 			
-			return this._potocol;
+			return this._type === ABSOLUTE;
+		},
+		
+		isValid : function () {
+			
+			return this._isValid;
+		},
+		
+		type : function () {
+			
+			return this._type;
+		},
+		
+		scheme : function () {
+			
+			return this._scheme;
 		},
 		
 		userInfo : function () {
@@ -121,7 +172,6 @@ var URL = function () {
 				i, len;
 			
 			if (query) {
-				queryString = QUESTION;
 				for (i = 0, len = query.length; i < len; i++) {
 					queryString += query[i].join(EQUALS);
 					if (i < len - 1) {
@@ -152,41 +202,53 @@ var URL = function () {
 				this._port ? (COLON + this._port) : EMPTY_STRING,
 			
 			].join(EMPTY_STRING);
-		}
+		},
 		
 		// *** Private Methods *** //
 		
-	};
-	
-	// *** Static *** //
-	
-	URL.parse = function (url) {
-		
-		if ( ! isString(url)) { return; }
-		
-		url = trim(url);
-		
-		return ( url.length > 0 ? url.match(URL_REGEX) : null );
-	};
-	
-	URL.parseQuery = function (queryString) {
-		
-		if ( ! isString(queryString)) { return; }
-		
-		queryString = trim(queryString);
-		
-		var query		= [],
-			queryParts	= queryString.split(AMP),
-			queryPart, i, len;
-		
-		for (i = 0, len = queryParts.length; i < len; i++) {
-			if (queryParts[i]) {
-				queryPart = queryParts[i].split(EQUALS);
-				query.push(queryPart[1] ? queryPart : [queryPart[0]]);
+		_parse : function (url, type) {
+			
+			if ( ! type) {
+				type = url.match(URL_TYPE_REGEX);
+				type = type ? type[1] ? ABSOLUTE : type[2] ? RELATIVE : null : null;
 			}
+			
+			var urlParts;
+			
+			switch (type) {
+				
+				case ABSOLUTE:
+					urlParts = url.match(URL_ABSOLUTE_REGEX);
+					if (urlParts) {
+						this._type		= ABSOLUTE;
+						this._scheme	= urlParts[1] ? urlParts[1].toLowerCase() : url.indexOf(SLASH_SLASH) !== 0 ? HTTP : undefined;
+						this._userInfo	= urlParts[2];
+						this._host		= urlParts[3].toLowerCase();
+						this._port		= urlParts[4] ? parseInt(urlParts[4], 10) : undefined;
+						this._path		= urlParts[5] || SLASH;
+						this._query		= parseQuery(urlParts[6]);
+						this._fragment	= urlParts[7];
+					}
+					break;
+					
+				case RELATIVE:
+					urlParts = url.match(URL_RELATIVE_REGEX);
+					if (urlParts) {
+						this._type		= RELATIVE;
+						this._path		= urlParts[5];
+						this._query		= parseQuery(urlParts[6]);
+						this._fragment	= urlParts[7];
+					}
+					break;
+					
+				default:
+					return ( this._parse(url, ABSOLUTE) || this._parse(url, RELATIVE) );
+				
+			}
+			
+			return ( urlParts ? true : false );
 		}
 		
-		return query;
 	};
 	
 }());
