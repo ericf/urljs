@@ -17,29 +17,29 @@ var URL = function () {
 
 (function(){
 	
-	var ABSOLUTE		= 'absolute',
-		RELATIVE		= 'schemeRelative',
+	var ABSOLUTE			= 'absolute',
+		RELATIVE			= 'relative',
 		
-		HTTP			= 'http',
-		HTTPS			= 'https',
-		COLON			= ':',
-		SLASH_SLASH		= '//',
-		WWW				= 'www',
-		AT				= '@',
-		DOT				= '.',
-		SLASH			= '/',
-		QUESTION		= '?',
-		EQUALS			= '=',
-		AMP				= '&',
-		HASH			= '#',
-		EMPTY_STRING	= '',
+		HTTP				= 'http',
+		HTTPS				= 'https',
+		COLON				= ':',
+		SLASH_SLASH			= '//',
+		WWW					= 'www',
+		AT					= '@',
+		DOT					= '.',
+		SLASH				= '/',
+		QUESTION			= '?',
+		EQUALS				= '=',
+		AMP					= '&',
+		HASH				= '#',
+		EMPTY_STRING		= '',
 		
 		URL_TYPE_REGEX		= /^(?:(https?:\/\/|\/\/)|(\/|\?|#)|[^;:@=\.\s])/i,
 		URL_ABSOLUTE_REGEX	= /^(?:(https?)?:?\/\/)?(?:([^:@\s]+:?[^:@\s]+?)@)?((?:[^;:@=\/\?\.\s]+\.)+[A-Za-z0-9\-]{2,})(?::(\d+))?(?=\/|\?|#|$)([^\?#]+)?(?:\?([^#]+))?(?:#(.+))?/i,
 		URL_RELATIVE_REGEX	= /^([^\?#]+)?(?:\?([^#]+))?(?:#(.+))?/i,
 		
-		STRING			= 'string',
-		TRIM_REGEX		= /^\s+|\s+$/g,
+		STRING				= 'string',
+		TRIM_REGEX			= /^\s+|\s+$/g,
 		
 		trim, isString;
 	
@@ -82,7 +82,7 @@ var URL = function () {
 	URL.ABSOLUTE	= ABSOLUTE;
 	URL.RELATIVE	= RELATIVE;
 	
-	URL.parseQuery		= parseQuery;
+	URL.parseQuery	= parseQuery;
 	
 	// *** Prototype *** //
 	
