@@ -488,6 +488,8 @@ var URL = function () {
 					if (path.indexOf(path.length) === SLASH) {
 						normalizedPath += SLASH;
 					}
+				} else {
+					normalizedPath = path;
 				}
 				
 				resolved.path(normalizedPath).query(url.query()).fragment(url.fragment());

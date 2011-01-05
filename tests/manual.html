@@ -17,6 +17,7 @@
 			console.log( URL('https://google.com').resolve('//tiptheweb.org').path('foo').toString() );
 			console.log( URL.resolve('https://google.com', '//tiptheweb.org') );
 			console.log( URL.normalize('HTTPS://TipTheWeb.org') );
+			console.log( URL('http://Example.com/foo/bar/index.html').resolve('/').resolve('foo/bar/').toString() );
 			
 		</script>
 		
