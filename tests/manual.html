@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+
+<html>
+	<head>
+		<title>URL.js API Testing</title>
+	</head>
+	
+	<body>
+	
+		<h1>URL.js API Testing</h1>
+		
+		<script src="../url.js"></script>
+		<script>
+			
+			console.log( URL.resolve('http://tiptheweb.org/foo/bar/zee/', '../../cool?baz=zee') );
+			console.log( URL().scheme('http').host('tiptheweb.org').fragment('yippe').queryString('crazy').scheme('https').toString() );
+			console.log( URL('https://google.com').resolve('//tiptheweb.org').path('foo').toString() );
+			console.log( URL.resolve('https://google.com', '//tiptheweb.org') );
+			console.log( URL.normalize('HTTPS://TipTheWeb.org') );
+			
+		</script>
+		
+	</body>
+</html>
