@@ -232,6 +232,20 @@ var URL = function () {
 		},
 		
 		/**
+		 * URL is host relative if it's relative and the path begins with '/'.
+		 * 
+		 * @public
+		 * @method	isHostRelative
+		 * @return	{Boolean}	hostRelative	- whether the URL is host-relative
+		 */
+		 isHostRelative : function () {
+		 	
+		 	var path = this._url[PATH];
+		 	
+		 	return ( this.isRelative() && path && path.indexOf(SLASH) === 0 );
+		 },
+		
+		/**
 		 * Returns the type of the URL, either: URL.ABSOLUTE or URL.RELATIVE.
 		 * 
 		 * @public
@@ -431,64 +445,60 @@ var URL = function () {
 			
 			url = (url instanceof URL) ? url : new URL(url);
 			
-			var resolved, path, pathParts, pathStack, i, len;
+			var resolved, path, pathParts, pathPart, pathStack, normalizedPath, i, len;
 			
 			if ( ! (this.isValid() && url.isValid())) { return this; } // not sure what to do???
 			
-			// base better be absolute, otherwise this is weird!
-			
-			if (this.isAbsolute()) {
-				
-				if (url.isAbsolute()) {
-					return ( url.scheme() ? url : new URL(url).scheme(this.scheme()) );
-				}
-				
-				// url isn't absolute and we can't mess with the authority, so let's move on…
-				
-				resolved = new URL(this);	// copy
-				
-				if (url.path()) {
-					
-					if (url.path().indexOf(SLASH) === 0) {
-						path = url.path();
-					} else {
-						path = this.path().substring(0, this.path().lastIndexOf(SLASH) + 1) + url.path();
-					}
-					
-					// normalize ../'s
-					if (path.indexOf(DOT_DOT_SLASH) > -1) {
-						pathParts = path.split(SLASH);
-						pathStack = [];
-						for ( i = 0, len = pathParts.length; i < len; i++ ) {
-							if (pathParts[i] === DOT_DOT 
-								&& pathStack.length > 0
-								&& pathStack[pathStack.length - 1] !== DOT_DOT) {
-								pathStack.pop();
-							} else {
-								pathStack.push(pathParts[i]);
-							}
-						}
-						path = pathStack.join(SLASH);
-						
-						if (path.indexOf(SLASH) !== 0) {
-							path = SLASH + path;
-						}
-						if (url.path().indexOf(url.path().length) === SLASH) {
-							path += SLASH;
-						}
-					}
-					
-					resolved.path(path).query(url.query()).fragment(url.fragment());
-					
-				} else if (url.query()) {
-					resolved.query(url.query()).fragment(url.fragment());
-				} else if (url.fragment()) {
-					resolved.fragment(url.fragment());
-				}
-				
-				return resolved;
-				
+			// the easy way
+			if (url.isAbsolute()) {
+				return ( this.isAbsolute() ? url.scheme() ? url : new URL(url).scheme(this.scheme()) : url );
 			}
+			
+			// the hard way
+			resolved = new URL(this.isAbsolute() ? this : null);
+			
+			if (url.path()) {
+				
+				if (url.isHostRelative() || ! this.path()) {
+					path = url.path();
+				} else {
+					path = this.path().substring(0, this.path().lastIndexOf(SLASH) + 1) + url.path();
+				}
+				
+				// normalize ../'s
+				if (path.indexOf(DOT_DOT_SLASH) > -1) {
+					pathParts = path.split(SLASH);
+					pathStack = [];
+					for ( i = 0, len = pathParts.length; i < len; i++ ) {
+						pathPart = pathParts[i];
+						if (pathPart === DOT_DOT && pathStack.length > 0) {
+							pathStack.pop();
+						} else if (pathPart) {
+							pathStack.push(pathPart);
+						}
+					}
+					
+					normalizedPath = pathStack.join(SLASH);
+					
+					// prepend slash if needed
+					if (path.indexOf(SLASH) === 0) {
+						normalizedPath = SLASH + normalizedPath;
+					}
+					// append slash if needed
+					if (path.indexOf(path.length) === SLASH) {
+						normalizedPath += SLASH;
+					}
+				}
+				
+				resolved.path(normalizedPath).query(url.query()).fragment(url.fragment());
+				
+			} else if (url.query()) {
+				resolved.query(url.query()).fragment(url.fragment());
+			} else if (url.fragment()) {
+				resolved.fragment(url.fragment());
+			}
+			
+			return resolved;
 		},
 				
 		// *** Private Methods *** //
