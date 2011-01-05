@@ -1,7 +1,8 @@
-/**
+/*!
  * URL.js
  * 
  * Copyright 2011 Eric Ferraiuolo
+ * https://github.com/ericf/urljs
  */
 
 /**
@@ -12,8 +13,8 @@
  * and is a convenient API for working with URL Objects and the various parts of URLs.
  * 
  * @constructor	URL
- * @param		{String | Object | URL}	url	- the URL String, parsed URL Object, or URL instance to base the URL instance from
- * @return		{URL}					url - instance of a URL all nice and parsed
+ * @param		{String | URL}	url	- the URL String to parse or URL instance to copy
+ * @return		{URL}			url - instance of a URL all nice and parsed
  */
 var URL = function () {
 	
@@ -35,7 +36,6 @@ var URL = function () {
 		HTTPS				= 'https',
 		COLON				= ':',
 		SLASH_SLASH			= '//',
-		WWW					= 'www',
 		AT					= '@',
 		DOT					= '.',
 		SLASH				= '/',
@@ -57,7 +57,7 @@ var URL = function () {
 		FRAGMENT			= 'fragment',
 		
 		URL_TYPE_REGEX		= /^(?:(https?:\/\/|\/\/)|(\/|\?|#)|[^;:@=\.\s])/i,
-		URL_ABSOLUTE_REGEX	= /^(?:(https?)?:?\/\/)?(?:([^:@\s]+:?[^:@\s]+?)@)?((?:[^;:@=\/\?\.\s]+\.)+[A-Za-z0-9\-]{2,})(?::(\d+))?(?=\/|\?|#|$)([^\?#]+)?(?:\?([^#]+))?(?:#(.+))?/i,
+		URL_ABSOLUTE_REGEX	= /^(?:(https?)?:?\/\/)(?:([^:@\s]+:?[^:@\s]+?)@)?((?:[^;:@=\/\?\.\s]+\.)+[A-Za-z0-9\-]{2,})(?::(\d+))?(?=\/|\?|#|$)([^\?#]+)?(?:\?([^#]+))?(?:#(.+))?/i,
 		URL_RELATIVE_REGEX	= /^([^\?#]+)?(?:\?([^#]+))?(?:#(.+))?/i,
 		
 		OBJECT				= 'object',
@@ -65,6 +65,7 @@ var URL = function () {
 		TRIM_REGEX			= /^\s+|\s+$/g,
 		
 		trim, isString;
+	
 	
 	// *** Utilities *** //
 	
@@ -84,177 +85,26 @@ var URL = function () {
 		return typeof o === STRING;
 	};
 	
+	
 	// *** Static *** //
 	
 	/**
-	 * Parses a URL into usable parts.
-	 * Reasonable defaults are applied to parts of the URL which weren't present in the input,
-	 * e.g. 'example.com' -> { type: 'absolute', scheme: 'http', host: 'example.com', path: '/' }
-	 * If nothing or a falsy value is returned the URL wasn't something valid,
-	 * usable, or that seems reasonably like a URL.
 	 * 
-	 * @static
-	 * @method	parse
-	 * @param	{String}	url			- the URL string to parse
-	 * @param	{String}	type		- URL.ABSOLUTE or URL.RELATIVE seeds the parsing style
-	 * @return	{Object}	parsedURL	- an Object representing the parts of the URL
-	 * 									contains the keys: type, scheme, userInfo, host, port, path, query, fragment
 	 */
-	function parse (url, type) {
-		
-		// make sure we have a good string
-		url = trim(url);
-		if ( ! (isString(url) && url.length > 0)) {
-			return;
-		}
-		
-		// figure out type, absolute or relative, if not provided
-		if ( ! type) {
-			type = url.match(URL_TYPE_REGEX);
-			type = type ? type[1] ? ABSOLUTE : type[2] ? RELATIVE : null : null;
-		}
-		
-		var parsedURL, urlParts;
-		
-		switch (type) {
-			
-			// parse as absolute URL
-			case ABSOLUTE:
-				urlParts = url.match(URL_ABSOLUTE_REGEX);
-				if (urlParts) {
-					parsedURL				= {};
-					parsedURL[TYPE]			= ABSOLUTE;
-					parsedURL[SCHEME]		= urlParts[1] ? urlParts[1].toLowerCase() : url.indexOf(SLASH_SLASH) !== 0 ? HTTP : undefined;
-					parsedURL[USER_INFO]	= urlParts[2];
-					parsedURL[HOST]			= urlParts[3].toLowerCase();
-					parsedURL[PORT]			= urlParts[4] ? parseInt(urlParts[4], 10) : undefined;
-					parsedURL[PATH]			= urlParts[5] || SLASH;
-					parsedURL[QUERY]		= parseQuery(urlParts[6]);
-					parsedURL[FRAGMENT]		= urlParts[7];
-				}
-				break;
-			
-			// parse as relative URL
-			case RELATIVE:
-				urlParts = url.match(URL_RELATIVE_REGEX);
-				if (urlParts) {
-					parsedURL			= {};
-					parsedURL[TYPE]		= RELATIVE;
-					parsedURL[PATH]		= urlParts[1];
-					parsedURL[QUERY]	= parseQuery(urlParts[2]);
-					parsedURL[FRAGMENT]	= urlParts[3];
-				}
-				break;
-			
-			// try to parse as absolute first, then relative if that fails
-			default:
-				return ( parse(url, ABSOLUTE) || parse(url, RELATIVE) );
-			
-		}
-		
-		return parsedURL;
-	}
+	URL.ABSOLUTE = ABSOLUTE;
 	
 	/**
-	 * Helper to parse a URL query string into an array of arrays.
-	 * Order of the query paramerters is maintained, an example structure would be:
-	 * queryString: 'foo=bar&baz' -> [['foo', 'bar'], ['baz']]
 	 * 
-	 * @static
-	 * @method	parseQuery
-	 * @param	{String}	queryString	- the query string to parse, should not include '?'
-	 * @return	{Array}		parsedQuery	- array of arrays representing the query parameters and values
 	 */
-	function parseQuery (queryString) {
-		
-		if ( ! isString(queryString)) { return; }
-		
-		queryString = trim(queryString);
-		
-		var query		= [],
-			queryParts	= queryString.split(AMP),
-			queryPart, i, len;
-		
-		for (i = 0, len = queryParts.length; i < len; i++) {
-			if (queryParts[i]) {
-				queryPart = queryParts[i].split(EQUALS);
-				query.push(queryPart[1] ? queryPart : [queryPart[0]]);
-			}
-		}
-		
-		return query;
-	}
+	URL.RELATIVE = RELATIVE;
 	
 	/**
-	 * Formats a URL String, parsed URL Object, or URL instance into a nice clean URL String.
-	 * Relative URLs will remain relative, scheme-relative (//) URLs remain scheme-relative.
 	 * 
-	 * @static
-	 * @method	format
-	 * @param	{String | Object | URL}	url				- the URL String, parsed URL Object, or URL instance to format
-	 * @return	{String}				formattedURL	- the clean formatted URL String
 	 */
-	function format (url) {
+	URL.normalize = function (url) {
 		
-		if (url instanceof URL) { return url.toString(); }
-		
-		url = isString(url) ? parse(url) : url;
-		
-		if ( ! url) { return EMPTY_STRING; }
-		
-		var formattedURL	= [],
-			type			= url[TYPE],
-			scheme			= url[SCHEME],
-			userInfo		= url[USER_INFO],
-			host			= url[HOST],
-			port			= url[PORT],
-			path			= url[PATH],
-			query			= url[QUERY],
-			fragment		= url[FRAGMENT];
-		
-		if (type === ABSOLUTE) {
-			formattedURL.push(
-				scheme ? (scheme + COLON + SLASH_SLASH) : SLASH_SLASH,
-				userInfo ? (userInfo + AT) : EMPTY_STRING,
-				host,
-				port ? (COLON + port) : EMPTY_STRING
-			);
-		}
-		
-		formattedURL.push(
-			path,
-			query ? (QUESTION + formatQuery(query)) : EMPTY_STRING,
-			fragment ? (HASH + fragment) : EMPTY_STRING
-		);
-		
-		return formattedURL.join(EMPTY_STRING);
-	}
-	
-	/**
-	 * Helper to format a parsed query array of arrays into a query String.
-	 * This method tries to be smart an doesn't leave trailing '=' or '&'.
-	 * 
-	 * @static
-	 * @method	formatQuery
-	 * @param	{Array}		parsedQuery	- array of arrays representing the parsed query parameters and values
-	 * @return	{String}	queryString	- the formatted query string, does not include '?'
-	 */
-	function formatQuery (query) {
-		
-		var queryString = EMPTY_STRING,
-			i, len;
-		
-		if (query) {
-			for (i = 0, len = query.length; i < len; i++) {
-				queryString += query[i].join(EQUALS);
-				if (i < len - 1) {
-					queryString += AMP;
-				}
-			}
-		}
-		
-		return queryString;
-	}
+		return new URL(url).toString();
+	};
 	
 	/**
 	 * Returns a resolved URL String using the baseUrl to resolve the url against.
@@ -262,84 +112,15 @@ var URL = function () {
 	 * 
 	 * @static
 	 * @method	resolve
-	 * @param	{String | Object | URL}	baseUrl			- the URL String, parsed URL Object, or URL instance as the resolving base
-	 * @param	{String | Object | URL}	url				- the URL String, parsed URL Object, or URL instance to resolve
-	 * @return	{String}				resolvedUrl		- a resolved URL String
+	 * @param	{String | URL}	baseUrl		- the URL String, or URL instance as the resolving base
+	 * @param	{String | URL}	url			- the URL String, or URL instance to resolve
+	 * @return	{String}		resolvedUrl	- a resolved URL String
 	 */
-	function resolve (baseUrl, url) {
+	URL.resolve = function (baseUrl, url) {
 		
-		baseUrl	= (baseUrl instanceof URL) ? baseUrl : URL(baseUrl);
-		url		= (url instanceof URL) ? url : URL(url);
-		
-		var resolvedURL, path, pathParts, pathStack, i, len;
-		
-		if ( ! (baseUrl.isValid() && url.isValid())) { return; }
-		
-		// base better be absolute, otherwise this is weird!
-		
-		if (baseUrl.isAbsolute()) {
-			
-			if (url.isAbsolute()) {
-				if (baseUrl.authority() === url.authority()) {
-					return URL(url).scheme(baseUrl.scheme()).toString();
-				} else {
-					return url.toString();
-				}
-			}
-			
-			// url isn't absolute
-			
-			resolvedURL	= URL(baseUrl);
-			
-			if (url.path()) {
-				
-				if (url.path().indexOf(SLASH) === 0) {
-					path = url.path();
-				} else {
-					path = baseUrl.path().substring(0, baseUrl.path().lastIndexOf(SLASH) + 1) + url.path();
-				}
-				
-				// normalize ../'s
-				if (path.indexOf(DOT_DOT_SLASH) > -1) {
-					pathParts = path.split(SLASH);
-					pathStack = [];
-					for ( i = 0, len = pathParts.length; i < len; i++ ) {
-						if (pathParts[i] === DOT_DOT 
-							&& pathStack.length > 0
-							&& pathStack[pathStack.length - 1] !== DOT_DOT) {
-							pathStack.pop();
-						} else {
-							pathStack.push(pathParts[i]);
-						}
-					}
-					path = pathStack.join(SLASH);
-					
-					if (url.path().indexOf(url.path().length) === SLASH) {
-						path += SLASH;
-					}
-				}
-				
-				resolvedURL.path(path).query(url.query()).fragment(url.fragment());
-				
-			} else if (url.query()) {
-				resolvedURL.query(url.query()).fragment(url.fragment());
-			} else if (url.fragment()) {
-				resolvedURL.fragment(url.fragment());
-			}
-			
-			return resolvedURL.toString();
-			
-		}
-	}
+		return new URL(baseUrl).resolve(url).toString();
+	};
 	
-	URL.ABSOLUTE	= ABSOLUTE;
-	URL.RELATIVE	= RELATIVE;
-	
-	URL.parse		= parse;
-	URL.parseQuery	= parseQuery;
-	URL.format		= format;
-	URL.formatQuery	= formatQuery;
-	URL.resolve		= resolve;
 	
 	// *** Prototype *** //
 	
@@ -352,18 +133,18 @@ var URL = function () {
 		 * The URL constructor delegates to this method to do the initializing,
 		 * and the mutator instance methods call this to re-initialize when something changes.
 		 * 
-		 * @private
-		 * @method	init
-		 * @param	{String | Object | URL}	url	- the URL String, parsed URL Object, or URL instance to base the URL instance from
- 		 * @return	{URL}					url - instance of a URL all nice and parsed/re-parsed
+		 * @protected
+		 * @method	_init
+		 * @param	{String | URL}	url	- the URL String, or URL instance
+ 		 * @return	{URL}			url - instance of a URL all nice and parsed/re-parsed
 		 */
 		_init : function (url) {
 			
-			url = isString(url) ? url : url instanceof URL ? url.toString() : isObject(url) ? format(url) : null;
-				
-			var parsedURL	= url ? parse(url) : null;
-			this._isValid	= parsedURL ? true : false;
-			this._url		= parsedURL || this._url || {};
+			url = isString(url) ? url : url instanceof URL ? url.toString() : null;
+			
+			this._original	= url;
+			this._url		= {};
+			this._isValid	= this._parse(url);
 			
 			return this;
 		},
@@ -380,10 +161,39 @@ var URL = function () {
 		 */
 		toString : function () {
 			
-			return format(this._url);
+			var url				= this._url,
+				urlParts		= [],
+				type			= url[TYPE],
+				scheme			= url[SCHEME],
+				path			= url[PATH],
+				query			= url[QUERY],
+				fragment		= url[FRAGMENT];
+			
+			if (type === ABSOLUTE) {
+				urlParts.push(
+					scheme ? (scheme + COLON + SLASH_SLASH) : SLASH_SLASH,
+					this.authority()
+				);
+				if (path && path.indexOf(SLASH) !== 0) {	// this should maybe go in _set
+					path = SLASH + path;
+				}
+			}
+			
+			urlParts.push(
+				path,
+				query ? (QUESTION + this.queryString()) : EMPTY_STRING,
+				fragment ? (HASH + fragment) : EMPTY_STRING
+			);
+			
+			return urlParts.join(EMPTY_STRING);
 		},
 		
 		// *** Accessor/Mutator Methods *** //
+		
+		original : function () {
+			
+			return this._original;
+		},
 		
 		/**
 		 * Whether parsing from initialization or re-initialization produced something valid.
@@ -445,15 +255,7 @@ var URL = function () {
 		 */
 		scheme : function (scheme) {
 			
-			var url = this._url;
-			
-			if (arguments.length) {
-				url[TYPE] = ABSOLUTE;
-				url[SCHEME] = scheme;
-				return this._init(this);
-			} else {
-				return url[SCHEME];
-			}
+			return ( arguments.length ? this._set(SCHEME, scheme) : this._url[SCHEME] );
 		},
 		
 		/**
@@ -467,15 +269,7 @@ var URL = function () {
 		 */
 		userInfo : function (userInfo) {
 			
-			var url = this._url;
-			
-			if (arguments.length) {
-				url[TYPE] = ABSOLUTE;
-				url[USER_INFO] = userInfo;
-				return this._init(this);
-			} else {
-				return url[USER_INFO];
-			}
+			return ( arguments.length ? this._set(USER_INFO, userInfo) : this._url[USER_INFO] );
 		},
 		
 		/**
@@ -489,15 +283,7 @@ var URL = function () {
 		 */
 		host : function (host) {
 			
-			var url = this._url;
-			
-			if (arguments.length) {
-				url[TYPE] = ABSOLUTE;
-				url[HOST] = host;
-				return this._init(this);
-			} else {
-				return url[HOST];
-			}
+			return ( arguments.length ? this._set(HOST, host) : this._url[HOST] );
 		},
 		
 		/**
@@ -525,15 +311,13 @@ var URL = function () {
 		 */
 		port : function (port) {
 			
-			var url = this._url;
-			
 			if (arguments.length) {
-				url[TYPE] = ABSOLUTE;
-				url[PORT] = port;
-				return this._init(this);
+				return this._set(PORT, port);
 			} else {
-				return url[PORT];
+				return this._url[PORT];
 			}
+			
+			return ( arguments.length ? this._set(PORT, port) : this._url[PORT] );
 		},
 		
 		/**
@@ -570,12 +354,7 @@ var URL = function () {
 		 */
 		path : function (path) {
 			
-			if (arguments.length) {
-				this._url[PATH] = path;
-				return this._init(this);
-			} else {
-				return this._url[PATH];
-			}
+			return ( arguments.length ? this._set(PATH, path) : this._url[PATH] );
 		},
 		
 		/**
@@ -589,12 +368,7 @@ var URL = function () {
 		 */
 		query : function (query) {
 			
-			if (arguments.length) {
-				this._url[QUERY] = query;
-				return this._init(this);
-			} else {
-				return this._url[QUERY];
-			}
+			return ( arguments.length ? this._set(QUERY, query) : this._url[QUERY] );
 		},
 		
 		/**
@@ -608,12 +382,26 @@ var URL = function () {
 		 */
 		queryString : function (queryString) {
 			
+			// parse and set queryString
 			if (arguments.length) {
-				this._url[QUERY] = parseQuery(queryString);
-				return this._init(this);
-			} else {
-				return formatQuery(this._url[QUERY]);
+				return this._set(QUERY, this._parseQuery(queryString));
 			}
+			
+			queryString = EMPTY_STRING;
+			
+			var query = this._url[QUERY],
+				i, len;
+			
+			if (query) {
+				for (i = 0, len = query.length; i < len; i++) {
+					queryString += query[i].join(EQUALS);
+					if (i < len - 1) {
+						queryString += AMP;
+					}
+				}
+			}
+			
+			return queryString;
 		},
 		
 		/**
@@ -627,26 +415,7 @@ var URL = function () {
 		 */
 		fragment : function (fragment) {
 			
-			if (arguments.length) {
-				this._url[FRAGMENT] = fragment;
-				return this._init(this);
-			} else {
-				return this._url[FRAGMENT];
-			}
-		},
-		
-		/**
-		 * Returns the formatted URL String.
-		 * This is an alias for toString, provided for API completeness with the static utility methods.
-		 * 
-		 * @public
-		 * @method	format
-		 * @alias	toString
-		 * @return	{String}	url	- formatted URL string	
-		 */
-		format : function () {
-			
-			return this.toString();
+			return ( arguments.length ? this._set(FRAGMENT, fragment) : this._url[FRAGMENT] );
 		},
 		
 		/**
@@ -655,15 +424,202 @@ var URL = function () {
 		 * 
 		 * @public
 		 * @method	resolve
-		 * @param	{String | Object | URL}	url	- the URL String, parsed URL Object, or URL instance to resolve
- 		 * @return	{URL}					url - a resolved URL instance
+		 * @param	{String | URL}	url	- the URL String, or URL instance to resolve
+ 		 * @return	{URL}			url - a resolved URL instance
 		 */
 		resolve : function (url) {
 			
-			return URL(resolve(this, url));
-		}
+			url = (url instanceof URL) ? url : new URL(url);
+			
+			var resolved, path, pathParts, pathStack, i, len;
+			
+			if ( ! (this.isValid() && url.isValid())) { return this; } // not sure what to do???
+			
+			// base better be absolute, otherwise this is weird!
+			
+			if (this.isAbsolute()) {
+				
+				if (url.isAbsolute()) {
+					return ( url.scheme() ? url : new URL(url).scheme(this.scheme()) );
+				}
+				
+				// url isn't absolute and we can't mess with the authority, so let's move on…
+				
+				resolved = new URL(this);	// copy
+				
+				if (url.path()) {
+					
+					if (url.path().indexOf(SLASH) === 0) {
+						path = url.path();
+					} else {
+						path = this.path().substring(0, this.path().lastIndexOf(SLASH) + 1) + url.path();
+					}
+					
+					// normalize ../'s
+					if (path.indexOf(DOT_DOT_SLASH) > -1) {
+						pathParts = path.split(SLASH);
+						pathStack = [];
+						for ( i = 0, len = pathParts.length; i < len; i++ ) {
+							if (pathParts[i] === DOT_DOT 
+								&& pathStack.length > 0
+								&& pathStack[pathStack.length - 1] !== DOT_DOT) {
+								pathStack.pop();
+							} else {
+								pathStack.push(pathParts[i]);
+							}
+						}
+						path = pathStack.join(SLASH);
+						
+						if (path.indexOf(SLASH) !== 0) {
+							path = SLASH + path;
+						}
+						if (url.path().indexOf(url.path().length) === SLASH) {
+							path += SLASH;
+						}
+					}
+					
+					resolved.path(path).query(url.query()).fragment(url.fragment());
+					
+				} else if (url.query()) {
+					resolved.query(url.query()).fragment(url.fragment());
+				} else if (url.fragment()) {
+					resolved.fragment(url.fragment());
+				}
+				
+				return resolved;
+				
+			}
+		},
 				
 		// *** Private Methods *** //
+		
+		/**
+		 * Parses a URL into usable parts.
+		 * Reasonable defaults are applied to parts of the URL which weren't present in the input,
+		 * e.g. 'http://example.com' -> { type: 'absolute', scheme: 'http', host: 'example.com', path: '/' }
+		 * If nothing or a falsy value is returned, the URL wasn't something valid.
+		 * 
+		 * @private
+		 * @method	_parse
+		 * @param	{String}	url		- the URL string to parse
+		 * @param	{String}	type	- Optional type to seed parsing: URL.ABSOLUTE or URL.RELATIVE
+		 * @return	{Boolean}	parsed	- whether or not the URL string was parsed
+		 */
+		_parse : function (url, type) {
+			
+			// make sure we have a good string
+			url = trim(url);
+			if ( ! (isString(url) && url.length > 0)) {
+				return false;
+			}
+			
+			var urlParts, parsed;
+			
+			// figure out type, absolute or relative, or quit
+			if ( ! type) {
+				type = url.match(URL_TYPE_REGEX);
+				type = type ? type[1] ? ABSOLUTE : type[2] ? RELATIVE : null : null;
+			}
+			
+			switch (type) {
+				
+				case ABSOLUTE:
+					urlParts = url.match(URL_ABSOLUTE_REGEX);
+					if (urlParts) {
+						parsed				= {};
+						parsed[TYPE]		= ABSOLUTE;
+						parsed[SCHEME]		= urlParts[1] ? urlParts[1].toLowerCase() : undefined;
+						parsed[USER_INFO]	= urlParts[2];
+						parsed[HOST]		= urlParts[3].toLowerCase();
+						parsed[PORT]		= urlParts[4] ? parseInt(urlParts[4], 10) : undefined;
+						parsed[PATH]		= urlParts[5] || SLASH;
+						parsed[QUERY]		= this._parseQuery(urlParts[6]);
+						parsed[FRAGMENT]	= urlParts[7];
+					}
+					break;
+				
+				case RELATIVE:
+					urlParts = url.match(URL_RELATIVE_REGEX);
+					if (urlParts) {
+						parsed				= {};
+						parsed[TYPE]		= RELATIVE;
+						parsed[PATH]		= urlParts[1];
+						parsed[QUERY]		= this._parseQuery(urlParts[2]);
+						parsed[FRAGMENT]	= urlParts[3];
+					}
+					break;
+				
+				// try to parse as absolute, if that fails then as relative 
+				default:
+					return ( this._parse(url, ABSOLUTE) || this._parse(url, RELATIVE) );
+					break;
+				
+			}
+			
+			if (parsed) {
+				this._url = parsed;
+				return true;
+			} else {
+				return false;
+			}
+		},
+		
+		/**
+		 * Helper to parse a URL query string into an array of arrays.
+		 * Order of the query paramerters is maintained, an example structure would be:
+		 * queryString: 'foo=bar&baz' -> [['foo', 'bar'], ['baz']]
+		 * 
+		 * @private
+		 * @method	_parseQuery
+		 * @param	{String}	queryString	- the query string to parse, should not include '?'
+		 * @return	{Array}		parsedQuery	- array of arrays representing the query parameters and values
+		 */
+		_parseQuery : function (queryString) {
+			
+			if ( ! isString(queryString)) { return; }
+			
+			queryString = trim(queryString);
+			
+			var query		= [],
+				queryParts	= queryString.split(AMP),
+				queryPart, i, len;
+			
+			for (i = 0, len = queryParts.length; i < len; i++) {
+				if (queryParts[i]) {
+					queryPart = queryParts[i].split(EQUALS);
+					query.push(queryPart[1] ? queryPart : [queryPart[0]]);
+				}
+			}
+			
+			return query;
+		},
+		
+		/**
+		 * Helper for mutators to set a new URL-part value.
+		 * After the URL-part is updated, the URL will be toString'd and re-parsed.
+		 * This is a brute, but will make sure the URL stays in sync and is re-validated.
+		 * 
+		 * @private
+		 * @method	_set
+		 * @param	{String}	urlPart	- the _url Object member String name
+		 * @param	{Object}	val		- the new value for the URL-part, mixed type
+		 * @return	{URL}		this	- returns this URL instance, chainable
+		 */
+		_set : function (urlPart, val) {
+			
+			this._url[urlPart] = val;
+			
+			if (urlPart === SCHEME		||
+				urlPart === USER_INFO	||
+				urlPart === HOST		||
+				urlPart === PORT		){
+				this._url[TYPE] = ABSOLUTE;	// temp, set this to help clue parsing
+			}
+			
+			this._isValid = this._parse(this.toString());
+			
+			return this;
+		}
 		
 	};
 	
