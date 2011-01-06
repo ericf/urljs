@@ -93,8 +93,23 @@ When creating an instance, **the `new` keyword is optional**.
     
     // Output Methods
     
-    url.toString();       // 'http://www.example.com'
-    url.resolve('/foo/'); // 'http://www.example.com/foo/'
+    url.toString();                  // 'http://www.example.com'
+    url.resolve('/foo/').toString(); // 'http://www.example.com/foo/'
 
 Yeah, `URL` instances are packed full of useful URL-ly jazz!
 
+Here are a few more “complex” examples of what you can do with mutation, chaining, building, and resolving:
+
+    // switch the scheme, resolve a path with a fragment, and navigate to it
+    window.location = URL(window.location.toString()).scheme('https').resolve('/about/#people').toString();
+    
+    // turn 'http://example.com' -> 'http://example.com/?foo=bar#baz'
+    URL('http://example.com').query([['foo', 'bar']]).fragment('baz');
+    
+	// build up a URL -> http://tiptheweb.org/tip/?link=https://github.com/ericf/urljs&amountCents=100
+	URL()
+	    .scheme('http')
+	    .host('tiptheweb.org')
+	    .path('/tip/')
+	    .query([['link', 'https://github.com/ericf/urljs'], ['amountCents', '100']]);
+	
