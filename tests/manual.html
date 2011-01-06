@@ -18,6 +18,8 @@
 			console.log( URL.resolve('https://google.com', '//tiptheweb.org') );
 			console.log( URL.normalize('HTTPS://TipTheWeb.org') );
 			console.log( URL('http://Example.com/foo/bar/index.html').resolve('/').resolve('foo/bar/').toString() );
+			console.log( URL.normalize('Http://Example.com?foo=#bar') );
+			console.log( URL().scheme('http').host('tiptheweb.org').path('/tip/').query([['link', 'https://github.com/ericf/urljs'], ['amountCents', '100']]) );
 			
 		</script>
 		

@@ -3,7 +3,7 @@
 <html>
 	
 	<head>
-		<title>Link Tests</title>
+		<title>URL.js Tests</title>
 		
 		<style>
 			html, body {
@@ -17,24 +17,26 @@
 	
 	<body class="yui3-skin-sam">
 		
+		<script src="../url.js"></script>
 		<script src="http://yui.yahooapis.com/3.2.0/build/yui/yui-min.js"></script>
 		<script>
 			YUI({
 				
 				modules : {
 					
-					'ttw-link-base' : {
-						fullpath : '../../../../web/yui3-ttw/link/link-base-debug.js',
-						requires : []
-					},
-					'ttw-link-test' : {
-						fullpath : 'link.js',
+					'test-utils' : {
+						fullpath : 'test-utils.js',
 						requires : ['test']
+					},
+					
+					'url-parsing-tests' : {
+						fullpath : 'url-parsing-tests.js',
+						requires : ['test', 'test-utils']
 					}
 					
 				}
 				
-			}).use('console', 'ttw-link-test', 'ttw-link-base', function(Y){
+			}).use('console', 'url-parsing-tests', function(Y){
 				
 				var console = new Y.Console({
 					
@@ -46,6 +48,7 @@
 					
 				}).render();
 				
+				Y.Test.Runner.setName('URL.js Tests');
 				Y.Test.Runner.run();
 				
 			});
