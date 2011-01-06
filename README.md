@@ -47,11 +47,19 @@ Takes in a dirty URL and makes it nice and clean.
     URL.normalize('Http://Example.com');          // http://example.com/
     URL.normalize('Http://Example.com?foo=#bar'); // http://example.com/?foo#bar
 
+This should be suffient to serve the use-case of want to clean up URLs,
+especially if were inputted by a user.
+
 #### `URL.resolve`:
 
 Given a base URL, this will resolve another URL against it; this method is inspired by what browsers do.
-Normalizing is part of resolving, so a normalized and resolved URL String is returned.
+Normalizing is part of resolving, so a normalized and resolved URL `String` is returned.
 
     URL.resolve('http://example.com/foo/bar', 'baz/index.html');        // http://example.com/foo/baz/index.html
     URL.resolve('https://example.com/foo/, '//example.com/bar.css');    // https://example.com/bar.css
     URL.resolve('http://example.com/foo/bar/zee/', '../../crazy#whoa'); // http://example.com/foo/crazy#whoa
+
+Resolving URLs is a pain in the ass, trust me, you don’t want to have to do this by hand.
+The implementation of `resolve` is using all parts of this library’s API to pull it off.
+
+### Using `URL` Instances
