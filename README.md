@@ -48,8 +48,10 @@ Takes in a dirty URL and makes it nice and clean.
   * `String url || URL url`
 * returns: `String normalizedUrl`
 
+
     URL.normalize('Http://Example.com');          // http://example.com/
     URL.normalize('Http://Example.com?foo=#bar'); // http://example.com/?foo#bar
+
 
 #### **`URL.resolve`**:
 
@@ -61,6 +63,8 @@ Normalizing is part of resolving, so a normalized and resolved URL String is ret
   * `String url || URL url`
 * returns: `String resolvedUrl`
 
+
     URL.resolve('http://example.com/foo/bar', 'baz/index.html');        // http://example.com/foo/baz/index.html
     URL.resolve('https://example.com/foo/, '//example.com/bar.css');    // https://example.com/bar.css
     URL.resolve('http://example.com/foo/bar/zee/', '../../crazy#whoa'); // http://example.com/foo/crazy#whoa
+
