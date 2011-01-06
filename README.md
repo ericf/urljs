@@ -5,6 +5,9 @@ URL.js
 URL.js can be used in both **server-side** and **client-side** JavaScript environments,
 it has **no dependencies** on any other libraries, and is easy to use for common URL-related tasks.
 
+Oh and since I built this to use on [TipTheWeb](http://tiptheweb.org/),
+you should [**tip this project**](http://tiptheweb.org/tip/?link=https://github.com/ericf/urljs&amountCents=100) if you find it useful! :-D
+
 Design & Approach
 -----------------
 
@@ -96,7 +99,7 @@ When creating an instance, **the `new` keyword is optional**.
     url.toString();                  // 'http://www.example.com'
     url.resolve('/foo/').toString(); // 'http://www.example.com/foo/'
 
-Yeah, `URL` instances are packed full of useful URL-ly jazz!
+**Yeah, `URL` instances are packed full of useful URL-ly jazz!**
 
 Here are a few more “complex” examples of what you can do with mutation, chaining, building, and resolving:
 
@@ -106,10 +109,14 @@ Here are a few more “complex” examples of what you can do with mutation, cha
     // turn 'http://example.com' -> 'http://example.com/?foo=bar#baz'
     URL('http://example.com').query([['foo', 'bar']]).fragment('baz');
     
-	// build up a URL -> http://tiptheweb.org/tip/?link=https://github.com/ericf/urljs&amountCents=100
+	// build up a URL to: http://tiptheweb.org/tip/?link=https://github.com/ericf/urljs&amountCents=100
 	URL()
 	    .scheme('http')
 	    .host('tiptheweb.org')
 	    .path('/tip/')
 	    .query([['link', 'https://github.com/ericf/urljs'], ['amountCents', '100']]);
 	
+License
+-------
+
+Copyright (c) 2011 Eric Ferraiuolo (http://eric.ferraiuolo.name).
