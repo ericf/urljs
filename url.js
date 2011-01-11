@@ -621,11 +621,15 @@ var URL = function () {
 			
 			this._url[urlPart] = val;
 			
-			if (urlPart === SCHEME		||
+			if (val						&& (
+				urlPart === SCHEME		||
 				urlPart === USER_INFO	||
 				urlPart === HOST		||
-				urlPart === PORT		){
+				urlPart === PORT		)){
 				this._url[TYPE] = ABSOLUTE;	// temp, set this to help clue parsing
+			}
+			if ( ! val && urlPart === HOST) {
+				this._url[TYPE] = RELATIVE; // temp, no host means relative
 			}
 			
 			this._isValid = this._parse(this.toString());
