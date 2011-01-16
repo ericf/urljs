@@ -63,7 +63,7 @@ YUI.add('test-utils', function(Y){
 		config.tearDown	= function(){ delete this.data; };
 		
 		Y.each(tests, function(expected, testName){
-			config['test' + testName.substring(0, 1).toUpperCase() + testName.substring(1)] = function(){
+			config['test ' + testName] = function(){
 				
 				var checkVal = function(val){
 					Y.Assert.areEqual(expected, val, testName + ' should be ' + expected);

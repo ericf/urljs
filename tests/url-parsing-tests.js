@@ -63,7 +63,7 @@ YUI.add('url-parsing-tests', function(Y){
 			path		: '/'
 		},
 		
-		'http//example.com'					: { isValid : false },	// TODO fixme
+		'http//example.com'					: { isValid : false, isRelative: true },	// TODO fixme
 		':example.com'						: { isValid : false },	// TODO fixme
 		'a://example.com'					: { isValid : false },	// TODO fixme
 		'http://example.com:asdf'			: { isValid : false },

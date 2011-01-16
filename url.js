@@ -57,7 +57,7 @@ var URL = function () {
 		FRAGMENT			= 'fragment',
 		
 		URL_TYPE_REGEX		= /^(?:(https?:\/\/|\/\/)|(\/|\?|#)|[^;:@=\.\s])/i,
-		URL_ABSOLUTE_REGEX	= /^(?:(https?)?:?\/\/)(?:([^:@\s]+:?[^:@\s]+?)@)?((?:[^;:@=\/\?\.\s]+\.)+[A-Za-z0-9\-]{2,})(?::(\d+))?(?=\/|\?|#|$)([^\?#]+)?(?:\?([^#]+))?(?:#(.+))?/i,
+		URL_ABSOLUTE_REGEX	= /^(?:(https?):\/\/|\/\/)(?:([^:@\s]+:?[^:@\s]+?)@)?((?:[^;:@=\/\?\.\s]+\.)+[A-Za-z0-9\-]{2,})(?::(\d+))?(?=\/|\?|#|$)([^\?#]+)?(?:\?([^#]+))?(?:#(.+))?/i,
 		URL_RELATIVE_REGEX	= /^([^\?#]+)?(?:\?([^#]+))?(?:#(.+))?/i,
 		
 		OBJECT				= 'object',
@@ -445,7 +445,7 @@ var URL = function () {
 			
 			url = (url instanceof URL) ? url : new URL(url);
 			
-			var resolved, path, pathParts, pathPart, pathStack, normalizedPath, i, len;
+			var resolved, path;
 			
 			if ( ! (this.isValid() && url.isValid())) { return this; } // not sure what to do???
 			
@@ -465,34 +465,7 @@ var URL = function () {
 					path = this.path().substring(0, this.path().lastIndexOf(SLASH) + 1) + url.path();
 				}
 				
-				// normalize ../'s
-				if (path.indexOf(DOT_DOT_SLASH) > -1) {
-					pathParts = path.split(SLASH);
-					pathStack = [];
-					for ( i = 0, len = pathParts.length; i < len; i++ ) {
-						pathPart = pathParts[i];
-						if (pathPart === DOT_DOT && pathStack.length > 0) {
-							pathStack.pop();
-						} else if (pathPart) {
-							pathStack.push(pathPart);
-						}
-					}
-					
-					normalizedPath = pathStack.join(SLASH);
-					
-					// prepend slash if needed
-					if (path.indexOf(SLASH) === 0) {
-						normalizedPath = SLASH + normalizedPath;
-					}
-					// append slash if needed
-					if (path.indexOf(path.length) === SLASH) {
-						normalizedPath += SLASH;
-					}
-				} else {
-					normalizedPath = path;
-				}
-				
-				resolved.path(normalizedPath).query(url.query()).fragment(url.fragment());
+				resolved.path(this._normalizePath(path)).query(url.query()).fragment(url.fragment());
 				
 			} else if (url.query()) {
 				resolved.query(url.query()).fragment(url.fragment());
@@ -501,6 +474,32 @@ var URL = function () {
 			}
 			
 			return resolved;
+		},
+		
+		/**
+		 * Returns a new, reduced relative URL instance using this as the baseUrl.
+		 * The URL passed in will be compared to the baseUrl with the goal of
+		 * returning a reduced-down URL to one that’s relative to the base (this).
+		 * This method is basically the opposite of resolve.
+		 * 
+		 * @public
+		 * @method	reduce
+		 * @param	{String | URL}	url	- the URL String, or URL instance to resolve
+		 * @return	{URL}			url	- the reduced URL instance
+		 */
+		reduce : function (url) {
+			
+			url = (url instanceof URL) ? url : new URL(url);
+			
+			var reduced = this.resolve(url);
+			
+			if (this.isAbsolute() && reduced.isAbsolute()) {
+				if (reduced.scheme() === this.scheme() && reduced.authority() === this.authority()) {
+					reduced.scheme(null).userInfo(null).host(null).port(null);
+				}
+			}
+			
+			return reduced;
 		},
 				
 		// *** Private Methods *** //
@@ -635,6 +634,53 @@ var URL = function () {
 			this._isValid = this._parse(this.toString());
 			
 			return this;
+		},
+		
+		/**
+		 * Returns a normalized path String, by removing ../'s.
+		 * 
+		 * @private
+		 * @method	_normalizePath
+		 * @param	{String}	path			— the path String to normalize
+		 * @return	{String}	normalizedPath	— the normalized path String
+		 */
+		_normalizePath : function (path) {
+			
+			var pathParts, pathPart, pathStack, normalizedPath, i, len;
+			
+			if (path.indexOf(DOT_DOT_SLASH) > -1) {
+				
+				pathParts = path.split(SLASH);
+				pathStack = [];
+				
+				for ( i = 0, len = pathParts.length; i < len; i++ ) {
+					pathPart = pathParts[i];
+					if (pathPart === DOT_DOT) {
+						pathStack.pop();
+					} else if (pathPart) {
+						pathStack.push(pathPart);
+					}
+				}
+				
+				normalizedPath = pathStack.join(SLASH);
+				
+				// prepend slash if needed
+				if (path[0] === SLASH) {
+					normalizedPath = SLASH + normalizedPath;
+				}
+				
+				// append slash if needed
+				if (path[path.length - 1] === SLASH && normalizedPath.length > 1) {
+					normalizedPath += SLASH;
+				}
+				
+			} else {
+				
+				normalizedPath = path;
+				
+			}
+			
+			return normalizedPath;
 		}
 		
 	};

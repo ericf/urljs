@@ -18,7 +18,7 @@
 	<body class="yui3-skin-sam">
 		
 		<script src="../url.js"></script>
-		<script src="http://yui.yahooapis.com/3.2.0/build/yui/yui-min.js"></script>
+		<script src="../../yui/yui3/build/yui/yui-min.js"></script>
 		<script>
 			YUI({
 				
@@ -32,11 +32,28 @@
 					'url-parsing-tests' : {
 						fullpath : 'url-parsing-tests.js',
 						requires : ['test', 'test-utils']
+					},
+					
+					'url-resolving-tests' : {
+						fullpath : 'url-resolving-tests.js',
+						requires : ['test', 'test-utils']
+					},
+					
+					'url-reducing-tests' : {
+						fullpath : 'url-reducing-tests.js',
+						requires : ['test', 'test-utils']
 					}
 					
 				}
 				
-			}).use('console', 'url-parsing-tests', function(Y){
+			}).use(
+				
+				'console',
+				'url-parsing-tests',
+				'url-resolving-tests',
+				'url-reducing-tests',
+					
+			function(Y){
 				
 				var console = new Y.Console({
 					
