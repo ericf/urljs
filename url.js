@@ -64,7 +64,7 @@ var URL = function () {
 		STRING				= 'string',
 		TRIM_REGEX			= /^\s+|\s+$/g,
 		
-		trim, isString;
+		trim, isObject, isString;
 	
 	
 	// *** Utilities *** //
@@ -79,7 +79,7 @@ var URL = function () {
 	
 	isObject = function (o) {
 		return ( o && typeof o === OBJECT );
-	}
+	};
 	
 	isString = function (o) {
 		return typeof o === STRING;
@@ -140,6 +140,8 @@ var URL = function () {
 		 */
 		_init : function (url) {
 			
+			this.constructor = URL;
+
 			url = isString(url) ? url : url instanceof URL ? url.toString() : null;
 			
 			this._original	= url;
