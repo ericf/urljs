@@ -109,12 +109,12 @@ Here are a few more “complex” examples of what you can do with mutation, cha
     // turn 'http://example.com' -> 'http://example.com/?foo=bar#baz'
     URL('http://example.com').query([['foo', 'bar']]).fragment('baz');
     
-	// build up a URL to: http://tiptheweb.org/tip/?link=https://github.com/ericf/urljs&title=URL.js — An API for working with URLs in JavaScript
+	// build up a URL to: http://tiptheweb.org/tip/?link=https://github.com/ericf/urljs
 	URL()
 	    .scheme('http')
 	    .host('tiptheweb.org')
 	    .path('/tip/')
-	    .query([['link', 'https://github.com/ericf/urljs'], ['title', 'URL.js — An API for working with URLs in JavaScript']]);
+	    .query([['link', 'https://github.com/ericf/urljs']]);
 	
 License
 -------
