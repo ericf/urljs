@@ -6,7 +6,7 @@ URL.js can be used in both **server-side** and **client-side** JavaScript enviro
 it has **no dependencies** on any other libraries, and is easy to use for common URL-related tasks.
 
 Oh and since I built this to use on [TipTheWeb](http://tiptheweb.org/),
-you should [**tip this project**](http://tiptheweb.org/tip/?link=https://github.com/ericf/urljs&amountCents=50) if you find it useful! :-D
+you should [**tip this project**](http://tiptheweb.org/tip/?link=https://github.com/ericf/urljs) if you find it useful! :-D
 
 Design & Approach
 -----------------
@@ -109,12 +109,12 @@ Here are a few more “complex” examples of what you can do with mutation, cha
     // turn 'http://example.com' -> 'http://example.com/?foo=bar#baz'
     URL('http://example.com').query([['foo', 'bar']]).fragment('baz');
     
-    // build up a URL to: http://tiptheweb.org/tip/?link=https://github.com/ericf/urljs&amountCents=50
+    // build up a URL to: http://tiptheweb.org/tip/?link=https://github.com/ericf/urljs
     URL()
         .scheme('http')
         .host('tiptheweb.org')
         .path('/tip/')
-        .query([['link', 'https://github.com/ericf/urljs'], ['amountCents', '50']]);
+        .query([['link', 'https://github.com/ericf/urljs']]);
     
 License
 -------
