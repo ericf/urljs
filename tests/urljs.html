@@ -1,76 +1,76 @@
 <!DOCTYPE html>
-	
+    
 <html>
-	
-	<head>
-		<title>URL.js Tests</title>
-		
-		<style>
-			html, body {
-				height: 100%;
-				margin: 0;
-				padding: 0;
-				overflow: hidden;
-			}
-		</style>
-	</head>
-	
-	<body class="yui3-skin-sam">
-		
-		<script src="../url.js"></script>
-		<script src="../../yui/yui3/build/yui/yui-min.js"></script>
-		<script>
-			YUI({
-				
-				modules : {
-					
-					'test-utils' : {
-						fullpath : 'test-utils.js',
-						requires : ['test']
-					},
-					
-					'url-parsing-tests' : {
-						fullpath : 'url-parsing-tests.js',
-						requires : ['test', 'test-utils']
-					},
-					
-					'url-resolving-tests' : {
-						fullpath : 'url-resolving-tests.js',
-						requires : ['test', 'test-utils']
-					},
-					
-					'url-reducing-tests' : {
-						fullpath : 'url-reducing-tests.js',
-						requires : ['test', 'test-utils']
-					}
-					
-				}
-				
-			}).use(
-				
-				'console',
-				'url-parsing-tests',
-				'url-resolving-tests',
-				'url-reducing-tests',
-					
-			function(Y){
-				
-				var console = new Y.Console({
-					
-					newestOnTop	: false,
-					consoleLimit: 5000,
-					width		: '100%',
-					height		: '100%',
-					style		: 'block'
-					
-				}).render();
-				
-				Y.Test.Runner.setName('URL.js Tests');
-				Y.Test.Runner.run();
-				
-			});
-		</script>
-		
-	</body>
-	
+    
+    <head>
+        <title>URL.js Tests</title>
+        
+        <style>
+            html, body {
+                height: 100%;
+                margin: 0;
+                padding: 0;
+                overflow: hidden;
+            }
+        </style>
+    </head>
+    
+    <body class="yui3-skin-sam">
+        
+        <script src="../url.js"></script>
+        <script src="../../yui/yui3/build/yui/yui-min.js"></script>
+        <script>
+            YUI({
+                
+                modules : {
+                    
+                    'test-utils' : {
+                        fullpath : 'test-utils.js',
+                        requires : ['test']
+                    },
+                    
+                    'url-parsing-tests' : {
+                        fullpath : 'url-parsing-tests.js',
+                        requires : ['test', 'test-utils']
+                    },
+                    
+                    'url-resolving-tests' : {
+                        fullpath : 'url-resolving-tests.js',
+                        requires : ['test', 'test-utils']
+                    },
+                    
+                    'url-reducing-tests' : {
+                        fullpath : 'url-reducing-tests.js',
+                        requires : ['test', 'test-utils']
+                    }
+                    
+                }
+                
+            }).use(
+                
+                'console',
+                'url-parsing-tests',
+                'url-resolving-tests',
+                'url-reducing-tests',
+                    
+            function(Y){
+                
+                var console = new Y.Console({
+                    
+                    newestOnTop : false,
+                    consoleLimit: 5000,
+                    width       : '100%',
+                    height      : '100%',
+                    style       : 'block'
+                    
+                }).render();
+                
+                Y.Test.Runner.setName('URL.js Tests');
+                Y.Test.Runner.run();
+                
+            });
+        </script>
+        
+    </body>
+    
 </html>

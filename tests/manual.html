@@ -1,31 +1,31 @@
 <!DOCTYPE html>
 
 <html>
-	<head>
-		<title>URL.js API Testing</title>
-	</head>
-	
-	<body>
-	
-		<h1>URL.js API Testing</h1>
-		
-		<script src="../url.js"></script>
-		<script>
-			
-			console.log( URL.resolve('http://tiptheweb.org/foo/bar/zee/', '../../cool?baz=zee') );
-			console.log( URL().scheme('http').host('tiptheweb.org').fragment('yippe').queryString('crazy').scheme('https').toString() );
-			console.log( URL('https://google.com').resolve('//tiptheweb.org').path('foo').toString() );
-			console.log( URL.resolve('https://google.com', '//tiptheweb.org') );
-			console.log( URL.normalize('HTTPS://TipTheWeb.org') );
-			console.log( URL('http://Example.com/foo/bar/index.html').resolve('/').resolve('foo/bar/').toString() );
-			console.log( URL.normalize('Http://Example.com?foo=#bar') );
-			console.log( URL().scheme('http').host('tiptheweb.org').path('/tip/').query([['link', 'https://github.com/ericf/urljs'], ['amountCents', '100']]) );
-			
-			console.log( URL.resolve('http://tiptheweb.org/combo/?utils:reset.css;5qdr559sm22f2ywn3e8a7ew14m&utils:base.css;8vv886twhgq0kf4zv251rhw4bg&res:style/style.css;wkdfgb90m3b4kqzs39b10rjhbw&res:style/chrome.css;ehgkgbdsehrx6rca4mw871h5m0&res:style/content.css;db5vsq5fkyvvqgw1p423m638r4&res:target/target.css;j8mpss79b9b4et7dpz9pyvh264&res:tip/tip.css;eqp9g7cn5pnmvtj31hr577rde8&res:tiplist/tiplist.css;2qhqp3fnqg0yvy5qvs149575rw&res:amountsuggest/amountsuggest.css;4q9c0d2c3vzypdyynhyenfqkqg&res:createtip/createtip.css;rnrwwddvkrgpn8vyfm27sav26c&res:claim-integrations/claim-integrations.css;s8z4mxk8hkfwy76drkpktw2e8m&res:windows/tips/tips.css;nxf05nh9px6k3papyqbrj96x44', 'res/style/img/content_bg.png;gwevd4dq6bqk8w4f2n5qvt3kx8') );
-			
-			console.log( URL('http://example.com/').scheme(null).host(null).port(null).type() );
-			
-		</script>
-		
-	</body>
+<head>
+    <title>URL.js API Testing</title>
+</head>
+
+<body>
+
+    <h1>URL.js API Testing</h1>
+    
+    <script src="../url.js"></script>
+    <script>
+        
+        console.log( URL.resolve('http://tiptheweb.org/foo/bar/zee/', '../../cool?baz=zee') );
+        console.log( URL().scheme('http').host('tiptheweb.org').fragment('yippe').queryString('crazy').scheme('https').toString() );
+        console.log( URL('https://google.com').resolve('//tiptheweb.org').path('foo').toString() );
+        console.log( URL.resolve('https://google.com', '//tiptheweb.org') );
+        console.log( URL.normalize('HTTPS://TipTheWeb.org') );
+        console.log( URL('http://Example.com/foo/bar/index.html').resolve('/').resolve('foo/bar/').toString() );
+        console.log( URL.normalize('Http://Example.com?foo=#bar') );
+        console.log( URL().scheme('http').host('tiptheweb.org').path('/tip/').query([['link', 'https://github.com/ericf/urljs'], ['amountCents', '100']]) );
+        
+        console.log( URL.resolve('http://tiptheweb.org/combo/?utils:reset.css;5qdr559sm22f2ywn3e8a7ew14m&utils:base.css;8vv886twhgq0kf4zv251rhw4bg&res:style/style.css;wkdfgb90m3b4kqzs39b10rjhbw&res:style/chrome.css;ehgkgbdsehrx6rca4mw871h5m0&res:style/content.css;db5vsq5fkyvvqgw1p423m638r4&res:target/target.css;j8mpss79b9b4et7dpz9pyvh264&res:tip/tip.css;eqp9g7cn5pnmvtj31hr577rde8&res:tiplist/tiplist.css;2qhqp3fnqg0yvy5qvs149575rw&res:amountsuggest/amountsuggest.css;4q9c0d2c3vzypdyynhyenfqkqg&res:createtip/createtip.css;rnrwwddvkrgpn8vyfm27sav26c&res:claim-integrations/claim-integrations.css;s8z4mxk8hkfwy76drkpktw2e8m&res:windows/tips/tips.css;nxf05nh9px6k3papyqbrj96x44', 'res/style/img/content_bg.png;gwevd4dq6bqk8w4f2n5qvt3kx8') );
+        
+        console.log( URL('http://example.com/').scheme(null).host(null).port(null).type() );
+        
+    </script>
+    
+</body>
 </html>
